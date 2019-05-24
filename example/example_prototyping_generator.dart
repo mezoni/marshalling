@@ -220,24 +220,24 @@ class PrototypingGenerator {
   _TypeInfo _parseTypeName(String name) {
     var fullName = name.trim();
     if (_primitiveTypes.containsKey(fullName)) {
-      return _primitiveTypes[name];
+      return _primitiveTypes[fullName];
     }
 
-    if (name == 'dynamic') {
+    if (fullName == 'dynamic') {
       return _dynamicType;
     }
 
     var result = _TypeInfo();
     var simpleName = fullName;
     var typeArgs = <_TypeInfo>[];
-    var open = name.indexOf('<');
-    var close = name.lastIndexOf('>');
+    var open = fullName.indexOf('<');
+    var close = fullName.lastIndexOf('>');
     if (open > 0) {
       if (close == -1) {
         throw FormatException(name);
       }
 
-      for (var arg in name.substring(open + 1, close).split(',')) {
+      for (var arg in fullName.substring(open + 1, close).split(',')) {
         var typeArg = _parseTypeName(arg);
         typeArgs.add(typeArg);
       }
