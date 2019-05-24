@@ -1,5 +1,4 @@
-import 'example json serializer.dart';
-import 'example_json_objects.dart';
+import 'json_objects.dart';
 
 void main() {
   var products = _getProducts();
