@@ -13,7 +13,7 @@ Three steps serialization:
 
 The above operations can be done manually or using sufficiently simple tools.
 
-# Prototype
+## Prototype
 
 json_objects.yaml
 
@@ -35,7 +35,7 @@ Product:
   id: int
 ```
 
-# Auto generate code
+## Auto generate code
 
 json_objects.dart
 
@@ -101,7 +101,7 @@ class Product {
 }
 ```
 
-# Use generated code (automatically serialize/derialize objects)
+## Use generated code (automatically serialize/derialize objects)
 
 example.dart
 
