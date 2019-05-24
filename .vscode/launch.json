@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "example/example.dart",
+            "program": "example/example.dart",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "example/example_basic_generator.dart",
+            "program": "example/example_basic_generator.dart",
+            "request": "launch",
+            "type": "dart"
+        }
+    ]
+}

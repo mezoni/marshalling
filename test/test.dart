@@ -1,17 +1,3 @@
-marshalling
-=======
-
-The marshalling library allows to marshal and unmarshal (also serialize/deserialize) an objects (e.g. into json compatible types)
-
-Version 0.1.0-dev (on development stage)
-
-Three steps serialization:
-
-1) Declare the classes of plain objects (PODO)
-2) Register classes, collection types, property accessors and properties
-3) Automatically serialize/derialize objects
-
-```dart
 import 'dart:convert';
 
 import 'package:marshalling/json_serializer.dart';
@@ -268,4 +254,3 @@ class Product {
   int id;
   String name;
 }
-```
