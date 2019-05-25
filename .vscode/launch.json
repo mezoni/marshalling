@@ -8,10 +8,11 @@
             "type": "dart"
         },
         {
-            "name": "example/example_basic_generator.dart",
-            "program": "example/example_basic_generator.dart",
+            "name": "bin/yaml2podo.dart",
+            "program": "bin/yaml2podo.dart",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "args": ["example/json_objects.yaml"]
         }
     ]
 }
