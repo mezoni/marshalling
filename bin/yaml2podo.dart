@@ -60,7 +60,13 @@ class PrototypingGenerator {
       }
 
       _classes[class_.fullName] = class_;
-      _parseProps(class_, _source[key] as Map);
+      var props = _source[key] as Map;
+      if (props == null) {
+        throw StateError(
+            'Object type declaration must contain properties: ${class_}');
+      }
+
+      _parseProps(class_, props);
     }
 
     for (var class_ in _classes.values) {
@@ -80,6 +86,12 @@ class PrototypingGenerator {
             case _TypeKind.list:
             case _TypeKind.map:
               _types[type.fullName] = type;
+              break;
+            case _TypeKind.object:
+              if (!_classes.containsKey(type.fullName)) {
+                throw StateError('Unknown type: ${type}');
+              }
+
               break;
             default:
               break;
@@ -266,14 +278,50 @@ class PrototypingGenerator {
     return result;
   }
 
+  void _checkValidIdentifier(String name) {
+    bool alpha(int c) {
+      if (c >= 65 && c <= 90 || c >= 97 && c <= 122) {
+        return true;
+      }
+
+      return false;
+    }
+
+    bool alphanum(int c) {
+      if (c >= 48 && c <= 57 || c >= 65 && c <= 90 || c >= 97 && c <= 122) {
+        return true;
+      }
+
+      return false;
+    }
+
+    void error(int offset) {
+      throw FormatException('Invalid identifier', name, offset);
+    }
+
+    var c = name.codeUnitAt(0);
+    if (!alpha(c)) {
+      error(0);
+    }
+
+    for (var i = 1; i < name.length; i++) {
+      var c = name.codeUnitAt(i);
+      if (!(alphanum(c) || c == 95)) {
+        error(i);
+      }
+    }
+  }
+
   void _parseProps(_TypeInfo type, Map data) {
     var props = <String, _PropInfo>{};
     for (var key in data.keys) {
       var nameParts = key.toString().trim().split('.');
       var name = nameParts[0].trim();
+      _checkValidIdentifier(name);
       String alias;
       if (nameParts.length > 1) {
         alias = nameParts[1].trim();
+        _checkValidIdentifier(alias);
       }
 
       var typeName = data[key].toString();

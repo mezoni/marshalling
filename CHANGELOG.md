@@ -1,3 +1,13 @@
+## 0.1.5
+
+- Fixed bugs in `bin/yaml2podo.dart`
+- Added value conversion `int => String` to `JsonSerializer`
+- Added value conversion `int => double` to `JsonSerializer`
+- Added value conversion `double => int` to `JsonSerializer`
+- Added value conversion `double => String` to `JsonSerializer`
+- Added value conversion `String => int` to `JsonSerializer`
+- Added value conversion `String => double` to `JsonSerializer`
+
 ## 0.1.4
 
 - Fixed bug in `bin/yaml2podo.dart`

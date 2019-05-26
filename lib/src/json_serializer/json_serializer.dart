@@ -39,6 +39,10 @@ class JsonSerializer extends Marshaller {
     }
 
     if (value is double) {
+      if (type == String) {
+        return value.toString();
+      }
+
       return value;
     }
 
@@ -51,6 +55,14 @@ class JsonSerializer extends Marshaller {
     }
 
     if (value is String) {
+      if (type == int) {
+        return int.parse(value);
+      }
+
+      if (type == double) {
+        return double.parse(value);
+      }
+
       return value;
     }
 
@@ -137,14 +149,36 @@ class JsonSerializer extends Marshaller {
     if (value is String) {
       if (type == DateTime) {
         return DateTime.parse(value);
-      } else if (type == int) {
+      }
+
+      if (type == int) {
         return int.parse(value);
+      }
+
+      if (type == double) {
+        return double.parse(value);
       }
 
       return value;
     }
 
-    if (value is num) {
+    if (value is int) {
+      if (type == double) {
+        return value.toDouble();
+      }
+
+      if (type == String) {
+        return value.toString();
+      }
+
+      return value;
+    }
+
+    if (value is double) {
+      if (type == String) {
+        return value.toString();
+      }
+
       return value;
     }
 

@@ -92,6 +92,9 @@ void _testJsonSerializer() {
     var expected = 1.0;
     expect(jsonValue, expected);
     _transform(value);
+    value = json.unmarshal(3, type: double);
+    expected = 3.0;
+    expect(value, expected);
   });
 
   test('Serialize "int" instance', () {
@@ -100,11 +103,6 @@ void _testJsonSerializer() {
     var expected = 1;
     expect(jsonValue, expected);
     _transform(value);
-    var jsonValue2 = json.marshal(value, type: String);
-    var expected2 = '1';
-    expect(jsonValue2, expected2);
-    var value2 = json.unmarshal(jsonValue2, type: int);
-    expect(value2, value);
   });
 
   test('Serialize "List" instance', () {
@@ -178,6 +176,60 @@ void _testJsonSerializer() {
     };
     expect(jsonValue, expected);
     _transform(value);
+  });
+
+  test('Convert "int" => "String"', () {
+    var value = 1;
+    var jsonValue = json.marshal(value, type: String);
+    var expected = '1';
+    expect(jsonValue, expected);
+    var value2 = json.unmarshal(jsonValue, type: int);
+    expect(value2, value);
+  });
+
+  test('Convert "String" => "int"', () {
+    var value = '1';
+    var jsonValue = json.marshal(value, type: int);
+    var expected = 1;
+    expect(jsonValue, expected);
+    var value2 = json.unmarshal(jsonValue, type: String);
+    expect(value2, value);
+  });
+
+  test('Convert "int" => "double"', () {
+    var value = 1;
+    var jsonValue = json.marshal(value, type: double);
+    var expected = 1.0;
+    expect(jsonValue, expected);
+    var value2 = json.unmarshal(jsonValue, type: int);
+    expect(value2, value);
+  });
+
+  test('Convert "double" => "int"', () {
+    var value = 1.0;
+    var jsonValue = json.marshal(value, type: int);
+    var expected = 1;
+    expect(jsonValue, expected);
+    var value2 = json.unmarshal(jsonValue, type: double);
+    expect(value2, value);
+  });
+
+  test('Convert "double" => "String"', () {
+    var value = 1.0;
+    var jsonValue = json.marshal(value, type: String);
+    var expected = '1.0';
+    expect(jsonValue, expected);
+    var value2 = json.unmarshal(jsonValue, type: double);
+    expect(value2, value);
+  });
+
+  test('Convert "String" => "double"', () {
+    var value = '1.0';
+    var jsonValue = json.marshal(value, type: double);
+    var expected = 1.0;
+    expect(jsonValue, expected);
+    var value2 = json.unmarshal(jsonValue, type: String);
+    expect(value2, value);
   });
 }
 
