@@ -1,0 +1,18 @@
+Alias:
+  clazz.class: String
+Bar:
+  i: int
+Foo:
+  bars: Map<String, Bar>
+Order:
+  amount: double
+  date: DateTime
+  items: List<OrderItem>
+  isShipped: bool
+OrderItem:
+  product: Product
+  quantity: int
+  price: num
+Product:
+  id: int
+  name: String

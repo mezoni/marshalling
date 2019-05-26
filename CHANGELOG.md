@@ -1,3 +1,8 @@
+## 0.1.4
+
+- Fixed bug in `bin/yaml2podo.dart`
+- Redesigned type naming parsing algorithm in `yaml2podo`
+
 ## 0.1.3
 
 - Added utilty `bin/yaml2podo.dart`

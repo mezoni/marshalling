@@ -4,27 +4,27 @@ void main() {
   var products = _getProducts();
   var order = _createOrder();
   _addItemsToOrder(order, products);
-  var jsonOrder = json.marshal(order);  
+  var jsonOrder = json.marshal(order);
   print(jsonOrder);
-  order = json.unmarshal<Order>(jsonOrder);  
-  
+  order = json.unmarshal<Order>(jsonOrder);
+
   //
   var orderItems = order.items;
-  var jsonOrderItems = json.marshal(orderItems);  
+  var jsonOrderItems = json.marshal(orderItems);
   print(jsonOrderItems);
   order.items = json.unmarshal<List<OrderItem>>(jsonOrderItems);
-  jsonOrderItems = json.marshal(orderItems);  
-  
+  jsonOrderItems = json.marshal(orderItems);
+
   //
   var messages = Messages();
   messages.messages = [];
   messages.messages.add(['Hello', 'Goodbye']);
   messages.messages.add(['Yes', 'No']);
-  var jsonMessages = json.marshal(messages);  
+  var jsonMessages = json.marshal(messages);
   print(jsonMessages);
   messages = json.unmarshal<Messages>(jsonMessages);
   jsonMessages = json.marshal(messages);
-  
+
   //
   var withMap = ObjectWithMap();
   withMap.products = {};
@@ -32,7 +32,7 @@ void main() {
     withMap.products[product.name] = product;
   }
 
-  var jsonWithMap = json.marshal(withMap);  
+  var jsonWithMap = json.marshal(withMap);
   print(jsonWithMap);
   withMap = json.unmarshal<ObjectWithMap>(jsonWithMap);
 }

@@ -3,44 +3,46 @@
 import 'package:marshalling/json_serializer.dart';
 
 final json = JsonSerializer()
-  ..addType(() => Messages())
-  ..addType(() => ObjectWithMap())
+  ..addType(() => Alias())
+  ..addType(() => Bar())
+  ..addType(() => Foo())
   ..addType(() => Order())
   ..addType(() => OrderItem())
   ..addType(() => Product())
   ..addIterableType<List<OrderItem>, OrderItem>(() => <OrderItem>[])
-  ..addMapType<Map<String, Product>, String, Product>(() => <String, Product>{})
-  ..addIterableType<Iterable<String>, String>(() => <String>[])
-  ..addIterableType<List<Iterable<String>>, Iterable<String>>(
-      () => <Iterable<String>>[])
+  ..addMapType<Map<String, Bar>, String, Bar>(() => <String, Bar>{})
   ..addAccessor('amount', (o) => o.amount, (o, v) => o.amount = v)
+  ..addAccessor('bars', (o) => o.bars, (o, v) => o.bars = v)
+  ..addAccessor('clazz', (o) => o.clazz, (o, v) => o.clazz = v)
   ..addAccessor('date', (o) => o.date, (o, v) => o.date = v)
+  ..addAccessor('i', (o) => o.i, (o, v) => o.i = v)
   ..addAccessor('id', (o) => o.id, (o, v) => o.id = v)
+  ..addAccessor('isShipped', (o) => o.isShipped, (o, v) => o.isShipped = v)
   ..addAccessor('items', (o) => o.items, (o, v) => o.items = v)
-  ..addAccessor('messages', (o) => o.messages, (o, v) => o.messages = v)
   ..addAccessor('name', (o) => o.name, (o, v) => o.name = v)
   ..addAccessor('price', (o) => o.price, (o, v) => o.price = v)
   ..addAccessor('product', (o) => o.product, (o, v) => o.product = v)
-  ..addAccessor('products', (o) => o.products, (o, v) => o.products = v)
   ..addAccessor('quantity', (o) => o.quantity, (o, v) => o.quantity = v)
-  ..addProperty<Messages, List<Iterable<String>>>('messages')
-  ..addProperty<ObjectWithMap, Map<String, Product>>('products')
+  ..addProperty<Alias, String>('clazz', alias: 'class')
+  ..addProperty<Bar, int>('i')
+  ..addProperty<Foo, Map<String, Bar>>('bars')
   ..addProperty<Order, double>('amount')
+  ..addProperty<Order, bool>('isShipped')
   ..addProperty<Order, DateTime>('date')
   ..addProperty<Order, List<OrderItem>>('items')
-  ..addProperty<OrderItem, int>('quantity', alias: 'qty')
-  ..addProperty<OrderItem, double>('price')
+  ..addProperty<OrderItem, int>('quantity')
+  ..addProperty<OrderItem, num>('price')
   ..addProperty<OrderItem, Product>('product')
   ..addProperty<Product, String>('name')
   ..addProperty<Product, int>('id');
 
-class Messages {
-  List<Iterable<String>> messages;
+class Alias {
+  String clazz;
 
-  Messages();
+  Alias();
 
-  factory Messages.fromJson(Map map) {
-    return json.unmarshal<Messages>(map);
+  factory Alias.fromJson(Map map) {
+    return json.unmarshal<Alias>(map);
   }
 
   Map<String, dynamic> toJson() {
@@ -48,13 +50,27 @@ class Messages {
   }
 }
 
-class ObjectWithMap {
-  Map<String, Product> products;
+class Bar {
+  int i;
 
-  ObjectWithMap();
+  Bar();
 
-  factory ObjectWithMap.fromJson(Map map) {
-    return json.unmarshal<ObjectWithMap>(map);
+  factory Bar.fromJson(Map map) {
+    return json.unmarshal<Bar>(map);
+  }
+
+  Map<String, dynamic> toJson() {
+    return json.marshal(this) as Map<String, dynamic>;
+  }
+}
+
+class Foo {
+  Map<String, Bar> bars;
+
+  Foo();
+
+  factory Foo.fromJson(Map map) {
+    return json.unmarshal<Foo>(map);
   }
 
   Map<String, dynamic> toJson() {
@@ -64,6 +80,7 @@ class ObjectWithMap {
 
 class Order {
   double amount;
+  bool isShipped;
   DateTime date;
   List<OrderItem> items;
 
@@ -80,7 +97,7 @@ class Order {
 
 class OrderItem {
   int quantity;
-  double price;
+  num price;
   Product product;
 
   OrderItem();

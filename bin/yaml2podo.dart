@@ -171,7 +171,7 @@ class PrototypingGenerator {
     lines.add('');
     for (var class_ in classes) {
       var className = class_.fullName;
-      lines.add('class ${className} {');      
+      lines.add('class ${className} {');
       for (var prop in class_.props.values) {
         var propTypeName = prop.type.fullName;
         var propName = prop.name;
@@ -193,6 +193,61 @@ class PrototypingGenerator {
     }
 
     return lines;
+  }
+
+  void _analyzeType(_TypeInfo type) {
+    var typeArgs = type.typeArgs;
+    for (var typeArg in typeArgs) {
+      _analyzeType(typeArg);
+    }
+
+    void checkTypeArgsCount(List<_TypeInfo> args) {
+      if (typeArgs.isEmpty) {
+        typeArgs.addAll(args);
+        return;
+      }
+
+      if (typeArgs.length != args.length) {
+        throw StateError('Wrong number of type arguments: $type');
+      }
+    }
+
+    _TypeKind kind;
+    switch (type.simpleName) {
+      case 'dynamic':
+        checkTypeArgsCount([]);
+        kind = _TypeKind.bottom;
+        break;
+      case 'bool':
+      case 'DateTime':
+      case 'double':
+      case 'int':
+      case 'num':
+      case 'String':
+        checkTypeArgsCount([]);
+        kind = _TypeKind.primitive;
+        break;
+      case 'Iterable':
+        checkTypeArgsCount([_dynamicType]);
+        kind = _TypeKind.iterable;
+        break;
+      case 'List':
+        checkTypeArgsCount([_dynamicType]);
+        kind = _TypeKind.list;
+        break;
+      case 'Map':
+        checkTypeArgsCount([_primitiveTypes['String'], _dynamicType]);
+        kind = _TypeKind.map;
+        break;
+      default:
+        if (typeArgs.isEmpty) {
+          kind = _TypeKind.object;
+        } else {
+          kind = _TypeKind.unknown;
+        }
+    }
+
+    type.kind = kind;
   }
 
   _TypeInfo _createDynmaicType() {
@@ -234,71 +289,10 @@ class PrototypingGenerator {
   }
 
   _TypeInfo _parseTypeName(String name) {
-    var fullName = name.trim();
-    if (_primitiveTypes.containsKey(fullName)) {
-      return _primitiveTypes[fullName];
-    }
-
-    if (fullName == 'dynamic') {
-      return _dynamicType;
-    }
-
-    var result = _TypeInfo();
-    var simpleName = fullName;
-    var typeArgs = <_TypeInfo>[];
-    var open = fullName.indexOf('<');
-    var close = fullName.lastIndexOf('>');
-    if (open > 0) {
-      if (close == -1) {
-        throw FormatException(name);
-      }
-
-      for (var arg in fullName.substring(open + 1, close).split(',')) {
-        var typeArg = _parseTypeName(arg);
-        typeArgs.add(typeArg);
-      }
-
-      simpleName = simpleName.substring(0, open);
-    }
-
-    void checkTypeArgsCount(List<_TypeInfo> args) {
-      if (typeArgs.isEmpty) {
-        typeArgs.addAll(args);
-        return;
-      }
-
-      if (typeArgs.length != args.length) {
-        throw StateError('Wrong number of type arguments: $fullName');
-      }
-    }
-
-    _TypeKind kind;
-    switch (simpleName) {
-      case 'Iterable':
-        checkTypeArgsCount([_dynamicType]);
-        kind = _TypeKind.iterable;
-        break;
-      case 'List':
-        checkTypeArgsCount([_dynamicType]);
-        kind = _TypeKind.list;
-        break;
-      case 'Map':
-        checkTypeArgsCount([_primitiveTypes['String'], _dynamicType]);
-        kind = _TypeKind.map;
-        break;
-      default:
-        if (typeArgs.isEmpty) {
-          kind = _TypeKind.object;
-        } else {
-          kind = _TypeKind.unknown;
-        }
-    }
-
-    result.fullName = fullName;
-    result.kind = kind;
-    result.simpleName = simpleName;
-    result.typeArgs.addAll(typeArgs);
-    return result;
+    var parser = _TypeParser();
+    var type = parser.parse(name);
+    _analyzeType(type);
+    return type;
   }
 
   void _reset() {
@@ -322,6 +316,17 @@ class _PropInfo {
   String toString() => '$type $name';
 }
 
+class _Token {
+  _TokenKind kind;
+  int start;
+  String text;
+
+  @override
+  String toString() => text;
+}
+
+enum _TokenKind { close, comma, eof, ident, open }
+
 class _TypeInfo {
   String fullName;
   _TypeKind kind;
@@ -334,3 +339,198 @@ class _TypeInfo {
 }
 
 enum _TypeKind { bottom, iterable, list, map, object, primitive, unknown }
+
+class _TypeParser {
+  String _source;
+
+  _Token _token;
+
+  List<_Token> _tokens;
+
+  int _pos;
+
+  _TypeInfo parse(String source) {
+    _source = source;
+    var tokenizer = _TypeTokenizer();
+    _tokens = tokenizer.tokenize(source);
+    _reset();
+
+    return _parseType();
+  }
+
+  void _match(_TokenKind kind) {
+    if (_token.kind == kind) {
+      _nextToken();
+      return;
+    }
+
+    throw FormatException('Invalid type', _source, _token.start);
+  }
+
+  _Token _nextToken() {
+    if (_pos + 1 < _tokens.length) {
+      _token = _tokens[++_pos];
+    }
+
+    return _token;
+  }
+
+  List<_TypeInfo> _parseArgs() {
+    var result = <_TypeInfo>[];
+    var type = _parseType();
+    result.add(type);
+    while (true) {
+      if (_token.kind != _TokenKind.comma) {
+        break;
+      }
+
+      _nextToken();
+      var type = _parseType();
+      result.add(type);
+    }
+
+    return result;
+  }
+
+  _TypeInfo _parseType() {
+    var simpleName = _token.text;
+    _match(_TokenKind.ident);
+    var args = <_TypeInfo>[];
+    if (_token.kind == _TokenKind.open) {
+      _nextToken();
+      args = _parseArgs();
+      _match(_TokenKind.close);
+    }
+
+    var result = _TypeInfo();
+    result.simpleName = simpleName;
+    result.fullName = simpleName;
+    if (args.isNotEmpty) {
+      var sb = StringBuffer();
+      sb.write(simpleName);
+      sb.write('<');
+      sb.write(args.join(', '));
+      sb.write('>');
+      result.fullName = sb.toString();
+    }
+
+    result.typeArgs.addAll(args);
+    return result;
+  }
+
+  void _reset() {
+    _pos = 0;
+    _token = _tokens[0];
+  }
+}
+
+class _TypeTokenizer {
+  static const _eof = 0;
+
+  int _ch;
+
+  int _pos;
+
+  String _source;
+
+  List<_Token> tokenize(String source) {
+    _source = source;
+    var tokens = <_Token>[];
+    _reset();
+    while (true) {
+      _white();
+      String text;
+      _TokenKind kind;
+      if (_ch == _eof) {
+        kind = _TokenKind.eof;
+        text = '';
+        break;
+      }
+
+      var start = _pos;
+      switch (_ch) {
+        case 44:
+          text = ',';
+          kind = _TokenKind.comma;
+          _nextCh();
+          break;
+        case 60:
+          text = '<';
+          kind = _TokenKind.open;
+          _nextCh();
+          break;
+        case 62:
+          text = '>';
+          kind = _TokenKind.close;
+          _nextCh();
+          break;
+        default:
+          if (_alpha(_ch)) {
+            var length = 1;
+            _nextCh();
+            while (_alphanum(_ch)) {
+              length++;
+              _nextCh();
+            }
+
+            text = source.substring(start, start + length);
+            kind = _TokenKind.ident;
+          } else {
+            throw FormatException('Invalid type', source, start);
+          }
+      }
+
+      var token = _Token();
+      token.kind = kind;
+      token.start = start;
+      token.text = text;
+      tokens.add(token);
+    }
+
+    return tokens;
+  }
+
+  bool _alpha(int c) {
+    if (c >= 65 && c <= 90 || c >= 97 && c <= 122) {
+      return true;
+    }
+
+    return false;
+  }
+
+  bool _alphanum(int c) {
+    if (c >= 48 && c <= 57 || c >= 65 && c <= 90 || c >= 97 && c <= 122) {
+      return true;
+    }
+
+    return false;
+  }
+
+  int _nextCh() {
+    if (_pos + 1 < _source.length) {
+      _ch = _source.codeUnitAt(++_pos);
+    } else {
+      _ch = _eof;
+    }
+
+    return _ch;
+  }
+
+  void _reset() {
+    _pos = 0;
+    _ch = _eof;
+    if (_source.isNotEmpty) {
+      _ch = _source.codeUnitAt(0);
+    }
+  }
+
+  void _white() {
+    while (true) {
+      if (_ch == 32) {
+        _nextCh();
+      } else {
+        break;
+      }
+    }
+  }
+}

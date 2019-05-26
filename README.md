@@ -1,41 +1,40 @@
-marshalling
-=======
+# marshalling
 
 The marshalling library allows to marshal and unmarshal (also serialize/deserialize) an objects (e.g. into json compatible types)
 
-Version 0.1.3 (on development stage)
+Version 0.1.4 (on development stage)
 
 Three steps serialization:
 
-1) Declare the classes of plain objects (PODO)
-2) Register classes, collection types, property accessors and properties
-3) Automatically serialize/derialize objects
+1. Declare the classes of plain objects (PODO)
+2. Register classes, collection types, property accessors and properties
+3. Automatically serialize/derialize objects
 
 The above operations can be done manually or using sufficiently simple tools.
 
-## Prototype
+## Prototype (using "yaml" format)
 
 json_objects.yaml
 
 ```yaml
 Messages:
-  messages : List<Iterable<String>>
+  messages: List<Iterable<String>>
 ObjectWithMap:
   products: Map<String, Product>
-Order:  
+Order:
   date: DateTime
   items: List<OrderItem>
   amount: double
 OrderItem:
   product: Product
   quantity.qty: int
-  price: double  
+  price: double
 Product:
   name: String
   id: int
 ```
 
-## Auto generate code (using the utility "yaml2podo.dart")
+## Auto generate code (using the utility "yaml2podo")
 
 json_objects.dart
 
@@ -162,27 +161,27 @@ void main() {
   var products = _getProducts();
   var order = _createOrder();
   _addItemsToOrder(order, products);
-  var jsonOrder = json.marshal(order);  
+  var jsonOrder = json.marshal(order);
   print(jsonOrder);
-  order = json.unmarshal<Order>(jsonOrder);  
-  
+  order = json.unmarshal<Order>(jsonOrder);
+
   //
   var orderItems = order.items;
-  var jsonOrderItems = json.marshal(orderItems);  
+  var jsonOrderItems = json.marshal(orderItems);
   print(jsonOrderItems);
   order.items = json.unmarshal<List<OrderItem>>(jsonOrderItems);
-  jsonOrderItems = json.marshal(orderItems);  
-  
+  jsonOrderItems = json.marshal(orderItems);
+
   //
   var messages = Messages();
   messages.messages = [];
   messages.messages.add(['Hello', 'Goodbye']);
   messages.messages.add(['Yes', 'No']);
-  var jsonMessages = json.marshal(messages);  
+  var jsonMessages = json.marshal(messages);
   print(jsonMessages);
   messages = json.unmarshal<Messages>(jsonMessages);
   jsonMessages = json.marshal(messages);
-  
+
   //
   var withMap = ObjectWithMap();
   withMap.products = {};
@@ -190,7 +189,7 @@ void main() {
     withMap.products[product.name] = product;
   }
 
-  var jsonWithMap = json.marshal(withMap);  
+  var jsonWithMap = json.marshal(withMap);
   print(jsonWithMap);
   withMap = json.unmarshal<ObjectWithMap>(jsonWithMap);
 }

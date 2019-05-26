@@ -5,11 +5,11 @@ class TypeInfo<T> {
 
   final Marshaller marshaller;
 
-  Map<String, PropertyInfo> _properties = {};  
+  Map<String, PropertyInfo> _properties = {};
 
   TypeInfo._internal({this.construct, this.marshaller});
 
-  Map<String, PropertyInfo> get properties => UnmodifiableMapView(_properties);  
+  Map<String, PropertyInfo> get properties => UnmodifiableMapView(_properties);
 
   Type get type => T;
 }

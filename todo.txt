@@ -1,3 +1,2 @@
-JsonSerializer generator
-PODO class generator from requested data
-privacy (in generators)
+PODO classes generator from requested data. For undocumented API.
+Privacy (in generators)
