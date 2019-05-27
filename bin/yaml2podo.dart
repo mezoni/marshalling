@@ -414,7 +414,7 @@ class PrototypingGenerator {
       if (alias == name) {
         alias = null;
       }
-      
+
       var typeName = data[key].toString();
       var type = _parseTypeName(typeName);
       var prop = _PropInfo();

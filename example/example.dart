@@ -1,40 +1,71 @@
 import 'json_objects.dart';
 
 void main() {
+  // Subject: Order
   var products = _getProducts();
   var order = _createOrder();
   _addItemsToOrder(order, products);
-  var jsonOrder = json.marshal(order);
-  print(jsonOrder);
-  order = json.unmarshal<Order>(jsonOrder);
 
-  //
+  // Serialize via `marshalling`
+  var jsonOrder1 = json.marshal(order) as Map;  
+  // Or serialize via `to json`
+  var jsonOrder2 = order.toJson();
+
+  print(jsonOrder1);
+  print(jsonOrder2);
+  
+  // Deserialize via `unmarshalling`
+  order = json.unmarshal<Order>(jsonOrder1);
+  // Or deserialize via `from json`
+  order = Order.fromJson(jsonOrder2);
+      
+  // Subject: Lit<OrderItem>
   var orderItems = order.items;
-  var jsonOrderItems = json.marshal(orderItems);
-  print(jsonOrderItems);
-  order.items = json.unmarshal<List<OrderItem>>(jsonOrderItems);
-  jsonOrderItems = json.marshal(orderItems);
 
-  //
+  // Serialize via `marshalling`
+  var jsonOrderItems = json.marshal(orderItems);
+
+  print(jsonOrderItems);
+  
+  // Deserialize via `unmarshalling`
+  order.items = json.unmarshal<List<OrderItem>>(jsonOrderItems);  
+  
+  // Subject: Messages
   var messages = Messages();
   messages.messages = [];
   messages.messages.add(['Hello', 'Goodbye']);
   messages.messages.add(['Yes', 'No']);
-  var jsonMessages = json.marshal(messages);
-  print(jsonMessages);
-  messages = json.unmarshal<Messages>(jsonMessages);
-  jsonMessages = json.marshal(messages);
 
-  //
-  var withMap = ObjectWithMap();
-  withMap.products = {};
+  // Serialize via `marshalling`
+  var jsonMessages1 = json.marshal(messages);
+  // Or serialize via `to json`
+  var jsonMessages2 = messages.toJson();
+  
+  print(jsonMessages1);
+  print(jsonMessages2);
+
+  // Deserialize via `unmarshalling`
+  messages = json.unmarshal<Messages>(jsonMessages1);  
+
+  // Subject: ObjectWithMap
+  var objectWithMap = ObjectWithMap();
+  objectWithMap.products = {};
   for (var product in products) {
-    withMap.products[product.name] = product;
+    objectWithMap.products[product.name] = product;
   }
 
-  var jsonWithMap = json.marshal(withMap);
-  print(jsonWithMap);
-  withMap = json.unmarshal<ObjectWithMap>(jsonWithMap);
+  // Serialize via `marshalling`
+  var jsonObjectWithMap1 = json.marshal(objectWithMap) as Map;
+  // Or serialize via `to json`
+  var jsonObjectWithMap2 = objectWithMap.toJson();
+
+  print(jsonObjectWithMap1);
+  print(jsonObjectWithMap2);  
+  
+  // Deserialize via `unmarshalling`
+  objectWithMap = json.unmarshal<ObjectWithMap>(jsonObjectWithMap1);
+  // Or deserialize via `from json`
+  objectWithMap = ObjectWithMap.fromJson(jsonObjectWithMap1);
 }
 
 void _addItemsToOrder(Order order, List<Product> products) {
