@@ -47,7 +47,7 @@ void _testJsonSerializer() {
           'quantity': 1
         }
       ],
-      'isShipped': true,
+      'is_shipped': true,
     };
 
     expect(jsonOrder, expected);

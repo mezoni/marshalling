@@ -1,11 +1,12 @@
 name: marshalling
-version: 0.1.5
+version: 0.1.6
 author: Andrew Mezoni <andrew.mezoni@gmail.com>
 description: The marshalling library allows to marshal and unmarshal (also serialize/deserialize) an objects (e.g. into json compatible types)
 homepage: https://github.com/mezoni/marshalling
 environment:
   sdk: '>=2.3.0 <3.0.0'
 dependencies:
+  args: ^1.5.1
   path: ^1.6.2
   yaml: ^2.1.15
 dev_dependencies:

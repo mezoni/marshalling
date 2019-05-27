@@ -8,7 +8,7 @@ Order:
   amount: double
   date: DateTime
   items: List<OrderItem>
-  isShipped: bool
+  is_shipped: bool
 OrderItem:
   product: Product
   quantity: int

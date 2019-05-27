@@ -1,3 +1,7 @@
+## 0.1.6
+
+- Breaking change. Added flag `--camelize` to `bin/yaml2podo.dart`. The default value is `true`
+
 ## 0.1.5
 
 - Fixed bugs in `bin/yaml2podo.dart`

@@ -1,5 +1,6 @@
 PODO classes generator from requested data. For undocumented API.
 Privacy (in generators)
-Auto convert int to DateTime?
-Fix List<UnknownType>
+Implement converters (timestamp <=> DateTime) in JsonSerializer
 Check ident
+Add an option (enabled by default?) to camelize propery names
+Simplify prototyping in yaml2podo, add support of nested object types
