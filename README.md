@@ -2,7 +2,7 @@
 
 The marshalling library allows to marshal and unmarshal (also serialize/deserialize) an objects (e.g. into json compatible types)
 
-Version 0.1.7 (on development stage)
+Version 0.1.8 (on development stage)
 
 Three steps serialization (without any restrictions on nesting objects):
 

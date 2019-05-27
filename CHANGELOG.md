@@ -1,3 +1,8 @@
+## 0.1.8
+
+- Fixed bug in `bin/yaml2podo.dart`
+- Added example `example_google_books/example_google_books.dart`
+
 ## 0.1.7
 
 - Modified `README.md` file

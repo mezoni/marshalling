@@ -1,0 +1,106 @@
+BooksResponse:
+  kind: String
+  totalItems: int
+  items: List<Volume>
+
+Volume:
+  kind: String
+  id: String
+  etag: String
+  selfLink: String
+  volumeInfo: VolumeInfo  
+  userInfo: UserInfo
+  saleInfo: SaleInfo
+  accessInfo: AccessInfo 
+  searchInfo: SearchInfo
+
+SearchInfo:
+  textSnippet: String  
+
+AccessInfo:
+  country: String
+  viewability: String
+  embeddable: bool
+  publicDomain: bool
+  textToSpeechPermission: String
+  epub: BookInfo
+  pdf: BookInfo
+  webReaderLink: String
+  accessViewStatus: String
+  downloadAccess: DownloadAccess
+
+DownloadAccess:
+  kind: String
+  volumeId: String
+  restricted: bool
+  deviceAllowed: bool
+  justAcquired: bool
+  maxDownloadDevices: int
+  downloadsAcquired: int
+  nonce: String
+  source: String
+  reasonCode: String
+  message: String
+  signature: String
+
+VolumeInfo:
+  title: String
+  subtitle: String
+  authors: List<String>
+  publisher: String
+  publishedDate: String
+  description: String
+  industryIdentifiers: List<IndustryIdentifier>
+  pageCount: int
+  dimensions: List<Dimension>
+  printType: String
+  mainCategory: String
+  categories: List<String>
+  averageRating: double
+  ratingsCount: int
+  contentVersion: String
+  imageLinks: ImageLinks
+  language: String
+  previewLink: String
+  infoLink: String
+  canonicalVolumeLink: String  
+
+Dimension:
+  height: String
+  width: String
+  thickness: String
+
+IndustryIdentifier:
+  type: String
+  identifier: String  
+
+UserInfo:  
+  isPurchased: bool
+  isPreordered: bool
+  updated: DateTime
+
+SaleInfo:
+  country: String
+  saleability: String
+  onSaleDate: DateTime
+  isEbook: bool
+  listPrice: Price
+  retailPrice: Price
+  buyLink: String
+
+Price:
+  amount: double
+  currencyCode: String
+
+BookInfo:
+  isAvailable: bool
+  downloadLink: String
+  acsTokenLink: String
+
+ImageLinks:
+  smallThumbnail: String
+  thumbnail: String
+  small: String
+  medium: String
+  large: String
+  extraLarge: String

@@ -404,7 +404,7 @@ class PrototypingGenerator {
         _checkValidIdentifier(alias);
       }
 
-      if (_camelize) {
+      if (_camelize && name.contains('_')) {
         var camelizedName = camelize(name, lower: true);
         if (name != camelizedName) {
           name = camelizedName;
