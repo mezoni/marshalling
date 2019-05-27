@@ -16,28 +16,40 @@ final json = JsonSerializer()
   ..addType(() => UserInfo())
   ..addType(() => Volume())
   ..addType(() => VolumeInfo())
-  ..addIterableType<List<IndustryIdentifier>, IndustryIdentifier>(() => <IndustryIdentifier>[])
+  ..addIterableType<List<IndustryIdentifier>, IndustryIdentifier>(
+      () => <IndustryIdentifier>[])
   ..addIterableType<List<Dimension>, Dimension>(() => <Dimension>[])
   ..addIterableType<List<String>, String>(() => <String>[])
   ..addIterableType<List<Volume>, Volume>(() => <Volume>[])
   ..addAccessor('accessInfo', (o) => o.accessInfo, (o, v) => o.accessInfo = v)
-  ..addAccessor('accessViewStatus', (o) => o.accessViewStatus, (o, v) => o.accessViewStatus = v)
-  ..addAccessor('acsTokenLink', (o) => o.acsTokenLink, (o, v) => o.acsTokenLink = v)
+  ..addAccessor('accessViewStatus', (o) => o.accessViewStatus,
+      (o, v) => o.accessViewStatus = v)
+  ..addAccessor(
+      'acsTokenLink', (o) => o.acsTokenLink, (o, v) => o.acsTokenLink = v)
   ..addAccessor('amount', (o) => o.amount, (o, v) => o.amount = v)
   ..addAccessor('authors', (o) => o.authors, (o, v) => o.authors = v)
-  ..addAccessor('averageRating', (o) => o.averageRating, (o, v) => o.averageRating = v)
+  ..addAccessor(
+      'averageRating', (o) => o.averageRating, (o, v) => o.averageRating = v)
   ..addAccessor('buyLink', (o) => o.buyLink, (o, v) => o.buyLink = v)
-  ..addAccessor('canonicalVolumeLink', (o) => o.canonicalVolumeLink, (o, v) => o.canonicalVolumeLink = v)
+  ..addAccessor('canonicalVolumeLink', (o) => o.canonicalVolumeLink,
+      (o, v) => o.canonicalVolumeLink = v)
   ..addAccessor('categories', (o) => o.categories, (o, v) => o.categories = v)
-  ..addAccessor('contentVersion', (o) => o.contentVersion, (o, v) => o.contentVersion = v)
+  ..addAccessor(
+      'contentVersion', (o) => o.contentVersion, (o, v) => o.contentVersion = v)
   ..addAccessor('country', (o) => o.country, (o, v) => o.country = v)
-  ..addAccessor('currencyCode', (o) => o.currencyCode, (o, v) => o.currencyCode = v)
-  ..addAccessor('description', (o) => o.description, (o, v) => o.description = v)
-  ..addAccessor('deviceAllowed', (o) => o.deviceAllowed, (o, v) => o.deviceAllowed = v)
+  ..addAccessor(
+      'currencyCode', (o) => o.currencyCode, (o, v) => o.currencyCode = v)
+  ..addAccessor(
+      'description', (o) => o.description, (o, v) => o.description = v)
+  ..addAccessor(
+      'deviceAllowed', (o) => o.deviceAllowed, (o, v) => o.deviceAllowed = v)
   ..addAccessor('dimensions', (o) => o.dimensions, (o, v) => o.dimensions = v)
-  ..addAccessor('downloadAccess', (o) => o.downloadAccess, (o, v) => o.downloadAccess = v)
-  ..addAccessor('downloadLink', (o) => o.downloadLink, (o, v) => o.downloadLink = v)
-  ..addAccessor('downloadsAcquired', (o) => o.downloadsAcquired, (o, v) => o.downloadsAcquired = v)
+  ..addAccessor(
+      'downloadAccess', (o) => o.downloadAccess, (o, v) => o.downloadAccess = v)
+  ..addAccessor(
+      'downloadLink', (o) => o.downloadLink, (o, v) => o.downloadLink = v)
+  ..addAccessor('downloadsAcquired', (o) => o.downloadsAcquired,
+      (o, v) => o.downloadsAcquired = v)
   ..addAccessor('embeddable', (o) => o.embeddable, (o, v) => o.embeddable = v)
   ..addAccessor('epub', (o) => o.epub, (o, v) => o.epub = v)
   ..addAccessor('etag', (o) => o.etag, (o, v) => o.etag = v)
@@ -46,46 +58,62 @@ final json = JsonSerializer()
   ..addAccessor('id', (o) => o.id, (o, v) => o.id = v)
   ..addAccessor('identifier', (o) => o.identifier, (o, v) => o.identifier = v)
   ..addAccessor('imageLinks', (o) => o.imageLinks, (o, v) => o.imageLinks = v)
-  ..addAccessor('industryIdentifiers', (o) => o.industryIdentifiers, (o, v) => o.industryIdentifiers = v)
+  ..addAccessor('industryIdentifiers', (o) => o.industryIdentifiers,
+      (o, v) => o.industryIdentifiers = v)
   ..addAccessor('infoLink', (o) => o.infoLink, (o, v) => o.infoLink = v)
-  ..addAccessor('isAvailable', (o) => o.isAvailable, (o, v) => o.isAvailable = v)
+  ..addAccessor(
+      'isAvailable', (o) => o.isAvailable, (o, v) => o.isAvailable = v)
   ..addAccessor('isEbook', (o) => o.isEbook, (o, v) => o.isEbook = v)
-  ..addAccessor('isPreordered', (o) => o.isPreordered, (o, v) => o.isPreordered = v)
-  ..addAccessor('isPurchased', (o) => o.isPurchased, (o, v) => o.isPurchased = v)
+  ..addAccessor(
+      'isPreordered', (o) => o.isPreordered, (o, v) => o.isPreordered = v)
+  ..addAccessor(
+      'isPurchased', (o) => o.isPurchased, (o, v) => o.isPurchased = v)
   ..addAccessor('items', (o) => o.items, (o, v) => o.items = v)
-  ..addAccessor('justAcquired', (o) => o.justAcquired, (o, v) => o.justAcquired = v)
+  ..addAccessor(
+      'justAcquired', (o) => o.justAcquired, (o, v) => o.justAcquired = v)
   ..addAccessor('kind', (o) => o.kind, (o, v) => o.kind = v)
   ..addAccessor('language', (o) => o.language, (o, v) => o.language = v)
   ..addAccessor('large', (o) => o.large, (o, v) => o.large = v)
   ..addAccessor('listPrice', (o) => o.listPrice, (o, v) => o.listPrice = v)
-  ..addAccessor('mainCategory', (o) => o.mainCategory, (o, v) => o.mainCategory = v)
-  ..addAccessor('maxDownloadDevices', (o) => o.maxDownloadDevices, (o, v) => o.maxDownloadDevices = v)
+  ..addAccessor(
+      'mainCategory', (o) => o.mainCategory, (o, v) => o.mainCategory = v)
+  ..addAccessor('maxDownloadDevices', (o) => o.maxDownloadDevices,
+      (o, v) => o.maxDownloadDevices = v)
   ..addAccessor('medium', (o) => o.medium, (o, v) => o.medium = v)
   ..addAccessor('message', (o) => o.message, (o, v) => o.message = v)
   ..addAccessor('nonce', (o) => o.nonce, (o, v) => o.nonce = v)
   ..addAccessor('onSaleDate', (o) => o.onSaleDate, (o, v) => o.onSaleDate = v)
   ..addAccessor('pageCount', (o) => o.pageCount, (o, v) => o.pageCount = v)
   ..addAccessor('pdf', (o) => o.pdf, (o, v) => o.pdf = v)
-  ..addAccessor('previewLink', (o) => o.previewLink, (o, v) => o.previewLink = v)
+  ..addAccessor(
+      'previewLink', (o) => o.previewLink, (o, v) => o.previewLink = v)
   ..addAccessor('printType', (o) => o.printType, (o, v) => o.printType = v)
-  ..addAccessor('publicDomain', (o) => o.publicDomain, (o, v) => o.publicDomain = v)
-  ..addAccessor('publishedDate', (o) => o.publishedDate, (o, v) => o.publishedDate = v)
+  ..addAccessor(
+      'publicDomain', (o) => o.publicDomain, (o, v) => o.publicDomain = v)
+  ..addAccessor(
+      'publishedDate', (o) => o.publishedDate, (o, v) => o.publishedDate = v)
   ..addAccessor('publisher', (o) => o.publisher, (o, v) => o.publisher = v)
-  ..addAccessor('ratingsCount', (o) => o.ratingsCount, (o, v) => o.ratingsCount = v)
+  ..addAccessor(
+      'ratingsCount', (o) => o.ratingsCount, (o, v) => o.ratingsCount = v)
   ..addAccessor('reasonCode', (o) => o.reasonCode, (o, v) => o.reasonCode = v)
   ..addAccessor('restricted', (o) => o.restricted, (o, v) => o.restricted = v)
-  ..addAccessor('retailPrice', (o) => o.retailPrice, (o, v) => o.retailPrice = v)
+  ..addAccessor(
+      'retailPrice', (o) => o.retailPrice, (o, v) => o.retailPrice = v)
   ..addAccessor('saleInfo', (o) => o.saleInfo, (o, v) => o.saleInfo = v)
-  ..addAccessor('saleability', (o) => o.saleability, (o, v) => o.saleability = v)
+  ..addAccessor(
+      'saleability', (o) => o.saleability, (o, v) => o.saleability = v)
   ..addAccessor('searchInfo', (o) => o.searchInfo, (o, v) => o.searchInfo = v)
   ..addAccessor('selfLink', (o) => o.selfLink, (o, v) => o.selfLink = v)
   ..addAccessor('signature', (o) => o.signature, (o, v) => o.signature = v)
   ..addAccessor('small', (o) => o.small, (o, v) => o.small = v)
-  ..addAccessor('smallThumbnail', (o) => o.smallThumbnail, (o, v) => o.smallThumbnail = v)
+  ..addAccessor(
+      'smallThumbnail', (o) => o.smallThumbnail, (o, v) => o.smallThumbnail = v)
   ..addAccessor('source', (o) => o.source, (o, v) => o.source = v)
   ..addAccessor('subtitle', (o) => o.subtitle, (o, v) => o.subtitle = v)
-  ..addAccessor('textSnippet', (o) => o.textSnippet, (o, v) => o.textSnippet = v)
-  ..addAccessor('textToSpeechPermission', (o) => o.textToSpeechPermission, (o, v) => o.textToSpeechPermission = v)
+  ..addAccessor(
+      'textSnippet', (o) => o.textSnippet, (o, v) => o.textSnippet = v)
+  ..addAccessor('textToSpeechPermission', (o) => o.textToSpeechPermission,
+      (o, v) => o.textToSpeechPermission = v)
   ..addAccessor('thickness', (o) => o.thickness, (o, v) => o.thickness = v)
   ..addAccessor('thumbnail', (o) => o.thumbnail, (o, v) => o.thumbnail = v)
   ..addAccessor('title', (o) => o.title, (o, v) => o.title = v)
@@ -93,10 +121,12 @@ final json = JsonSerializer()
   ..addAccessor('type', (o) => o.type, (o, v) => o.type = v)
   ..addAccessor('updated', (o) => o.updated, (o, v) => o.updated = v)
   ..addAccessor('userInfo', (o) => o.userInfo, (o, v) => o.userInfo = v)
-  ..addAccessor('viewability', (o) => o.viewability, (o, v) => o.viewability = v)
+  ..addAccessor(
+      'viewability', (o) => o.viewability, (o, v) => o.viewability = v)
   ..addAccessor('volumeId', (o) => o.volumeId, (o, v) => o.volumeId = v)
   ..addAccessor('volumeInfo', (o) => o.volumeInfo, (o, v) => o.volumeInfo = v)
-  ..addAccessor('webReaderLink', (o) => o.webReaderLink, (o, v) => o.webReaderLink = v)
+  ..addAccessor(
+      'webReaderLink', (o) => o.webReaderLink, (o, v) => o.webReaderLink = v)
   ..addAccessor('width', (o) => o.width, (o, v) => o.width = v)
   ..addProperty<AccessInfo, String>('country')
   ..addProperty<AccessInfo, String>('textToSpeechPermission')

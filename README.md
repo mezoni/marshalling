@@ -2,9 +2,25 @@
 
 The marshalling library allows to marshal and unmarshal (also serialize/deserialize) an objects (e.g. into json compatible types)
 
-Version 0.1.8 (on development stage)
+Version 0.1.9 (on development stage)
 
-Three steps serialization (without any restrictions on nesting objects):
+Included utilities:
+- resp2yaml
+- yaml2podo
+
+### Utilty 'resp2yaml'
+
+The utilty `resp2yaml` generates (extracts) the json object prototypes (in `yaml` format) from the response data file (in `json` format).
+Use of this utility is optional.
+
+### Utilty 'yaml2podo'
+
+The utilty `yaml2podo` generates PODO classes from the json object prototypes specified in `yaml` format.
+It is recommended to use this utility.
+
+### Common usage
+
+Three steps serialization:
 
 1. Declare the classes of plain objects (PODO)
 2. Register classes, collection types, property accessors and properties
@@ -14,7 +30,7 @@ The above operations can be done manually or using sufficiently simple tools.
 
 Below is an example of designing and generating objects (with an example of use).
 
-## Prototype plain old objects (using "yaml" format)
+### Prototype plain old objects (using 'yaml' format)
 
 json_objects.yaml
 
@@ -36,7 +52,7 @@ Product:
   id: int
 ```
 
-## Auto generate source code (using the utility "yaml2podo")
+### Auto generate source code (using the utility 'yaml2podo')
 
 json_objects.dart
 
@@ -153,7 +169,7 @@ class Product {
 
 ```
 
-## Use generated code (automatically serialize/derialize objects)
+### Use generated code (automatically serialize/derialize objects)
 
 example.dart
 

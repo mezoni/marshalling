@@ -12,7 +12,18 @@
             "program": "bin/yaml2podo.dart",
             "request": "launch",
             "type": "dart",
-            "args": ["example/json_objects.yaml"]
+            "args": [
+                "example/json_objects.yaml"
+            ]
+        },
+        {
+            "name": "bin/resp2yaml.dart",
+            "program": "bin/resp2yaml.dart",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "bin/starship.json"
+            ]
         }
     ]
 }
