@@ -122,9 +122,9 @@ void _testJsonSerializer() {
       now.toIso8601String(),
       [1]
     ];
-    expect(jsonValue, expected);
+    expect(jsonValue, expected);    
     _transform(value);
-  });
+  });  
 
   test('Serialize the "List<Product>" instance', () {
     var value = _products;

@@ -6,11 +6,14 @@ final json = JsonSerializer()
   ..addType(() => Alias())
   ..addType(() => Bar())
   ..addType(() => Foo())
+  ..addType(() => ObjectWithObjects())
   ..addType(() => Order())
   ..addType(() => OrderItem())
   ..addType(() => Product())
-  ..addIterableType<List<OrderItem>, OrderItem>(() => <OrderItem>[])
   ..addMapType<Map<String, Bar>, String, Bar>(() => <String, Bar>{})
+  ..addMapType<Map<String, Object>, String, Object>(() => <String, Object>{})
+  ..addIterableType<List<Object>, Object>(() => <Object>[])
+  ..addIterableType<List<OrderItem>, OrderItem>(() => <OrderItem>[])
   ..addAccessor('amount', (o) => o.amount, (o, v) => o.amount = v)
   ..addAccessor('bars', (o) => o.bars, (o, v) => o.bars = v)
   ..addAccessor('clazz', (o) => o.clazz, (o, v) => o.clazz = v)
@@ -19,6 +22,8 @@ final json = JsonSerializer()
   ..addAccessor('id', (o) => o.id, (o, v) => o.id = v)
   ..addAccessor('isShipped', (o) => o.isShipped, (o, v) => o.isShipped = v)
   ..addAccessor('items', (o) => o.items, (o, v) => o.items = v)
+  ..addAccessor('list', (o) => o.list, (o, v) => o.list = v)
+  ..addAccessor('map', (o) => o.map, (o, v) => o.map = v)
   ..addAccessor('name', (o) => o.name, (o, v) => o.name = v)
   ..addAccessor('price', (o) => o.price, (o, v) => o.price = v)
   ..addAccessor('product', (o) => o.product, (o, v) => o.product = v)
@@ -26,6 +31,8 @@ final json = JsonSerializer()
   ..addProperty<Alias, String>('clazz', alias: 'class')
   ..addProperty<Bar, int>('i')
   ..addProperty<Foo, Map<String, Bar>>('bars')
+  ..addProperty<ObjectWithObjects, Map<String, Object>>('map')
+  ..addProperty<ObjectWithObjects, List<Object>>('list')
   ..addProperty<Order, double>('amount')
   ..addProperty<Order, bool>('isShipped', alias: 'is_shipped')
   ..addProperty<Order, DateTime>('date')
@@ -71,6 +78,21 @@ class Foo {
 
   factory Foo.fromJson(Map map) {
     return json.unmarshal<Foo>(map);
+  }
+
+  Map<String, dynamic> toJson() {
+    return json.marshal(this) as Map<String, dynamic>;
+  }
+}
+
+class ObjectWithObjects {
+  Map<String, Object> map;
+  List<Object> list;
+
+  ObjectWithObjects();
+
+  factory ObjectWithObjects.fromJson(Map map) {
+    return json.unmarshal<ObjectWithObjects>(map);
   }
 
   Map<String, dynamic> toJson() {

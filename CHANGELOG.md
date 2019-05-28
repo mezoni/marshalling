@@ -1,3 +1,8 @@
+## 0.1.10
+
+- Minor improvements in `bin/resp2yaml.dart`
+- Minor improvements in `bin/yaml2podo.dart`
+
 ## 0.1.9
 
 - Added utilty `bin/resp2yaml.dart`

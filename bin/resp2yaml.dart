@@ -213,18 +213,14 @@ class Resp2YamlGenerator {
       return 'List<${_unknownTypeName}>';
     }
 
-    var typeNames = Set<String>();
+    var typeUnion = Set<String>();
     for (var element in list) {
       var typeName = _analyze(element, path);
-      typeNames.add(typeName);
+      typeUnion.add(typeName);
     }
 
-    if (typeNames.length == 1) {
-      var elementType = typeNames.first;
-      return 'List<${elementType}>';
-    }
-
-    return 'List<${_unknownTypeName}>';
+    var typeName = _reduceTypeUnion(typeUnion);
+    return 'List<${typeName}>';
   }
 
   String _analyzeMap(Map map, List<String> path) {

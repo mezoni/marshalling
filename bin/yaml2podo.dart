@@ -150,7 +150,7 @@ class PrototypingGenerator {
         throw StateError('Duplicate type name: ${class_.fullName}');
       }
 
-      if (class_.kind != _TypeKind.object) {
+      if (class_.kind != _TypeKind.custom) {
         throw StateError('Unable to generate class: ${class_.fullName}');
       }
 
@@ -182,7 +182,7 @@ class PrototypingGenerator {
             case _TypeKind.map:
               _types[type.fullName] = type;
               break;
-            case _TypeKind.object:
+            case _TypeKind.custom:
               if (!_classes.containsKey(type.fullName)) {
                 throw StateError('Unknown type: ${type}');
               }
@@ -195,13 +195,14 @@ class PrototypingGenerator {
 
         switch (propType.kind) {
           case _TypeKind.bottom:
+          case _TypeKind.object:
             break;
           case _TypeKind.iterable:
           case _TypeKind.list:
           case _TypeKind.map:
             walkTypes(propType);
             break;
-          case _TypeKind.object:
+          case _TypeKind.custom:
             if (!_classes.containsKey(propType.fullName)) {
               throw StateError('Unknown property type: ${propType}');
             }
@@ -347,12 +348,12 @@ class PrototypingGenerator {
         checkTypeArgsCount([_primitiveTypes['String'], _dynamicType]);
         kind = _TypeKind.map;
         break;
+      case 'Object':
+        checkTypeArgsCount([]);
+        kind = _TypeKind.object;
+        break;
       default:
-        if (typeArgs.isEmpty) {
-          kind = _TypeKind.object;
-        } else {
-          kind = _TypeKind.unknown;
-        }
+        kind = _TypeKind.custom;
     }
 
     type.kind = kind;
@@ -477,7 +478,7 @@ class _TypeInfo {
   String toString() => '$fullName';
 }
 
-enum _TypeKind { bottom, iterable, list, map, object, primitive, unknown }
+enum _TypeKind { bottom, custom, iterable, list, map, object, primitive }
 
 class _TypeParser {
   String _source;

@@ -14,6 +14,7 @@ abstract class Marshaller {
     _primitiveTypes.add(int);
     _primitiveTypes.add(num);
     _primitiveTypes.add(String);
+    addType<Object>(() => Object());
   }
 
   Map<String, PropertyAccessor> get accessors =>

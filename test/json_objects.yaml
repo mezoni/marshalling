@@ -16,3 +16,6 @@ OrderItem:
 Product:
   id: int
   name: String
+ObjectWithObjects:
+  list: List<Object>
+  map: Map<String, Object>
