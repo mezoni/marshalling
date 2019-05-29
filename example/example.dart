@@ -46,6 +46,8 @@ void main() {
 
   // Deserialize via `unmarshalling`
   messages = json.unmarshal<Messages>(jsonMessages1);
+  // Or deserialize via `from json`
+  messages = Messages.fromJson(jsonMessages2);
 
   // Subject: ObjectWithMap
   var objectWithMap = ObjectWithMap();
@@ -65,7 +67,7 @@ void main() {
   // Deserialize via `unmarshalling`
   objectWithMap = json.unmarshal<ObjectWithMap>(jsonObjectWithMap1);
   // Or deserialize via `from json`
-  objectWithMap = ObjectWithMap.fromJson(jsonObjectWithMap1);
+  objectWithMap = ObjectWithMap.fromJson(jsonObjectWithMap2);
 }
 
 void _addItemsToOrder(Order order, List<Product> products) {

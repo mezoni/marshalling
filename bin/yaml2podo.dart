@@ -1,10 +1,11 @@
 import 'dart:io';
 
-import 'package:path/path.dart' as _path;
 import 'package:args/args.dart';
+import 'package:path/path.dart' as _path;
 import 'package:yaml/yaml.dart' as yaml;
 
-// Experimental
+import '_utils.dart' as _utils;
+
 void main(List<String> args) {
   var argParser = ArgParser();
   argParser.addFlag('camelize',
@@ -40,8 +41,8 @@ void main(List<String> args) {
   var inputFile = File(inputFileName);
   var data = inputFile.readAsStringSync();
   var source = yaml.loadYaml(data);
-  var generator = PrototypingGenerator(source as Map, camelize: camelize);
-  var lines = generator.generate();
+  var generator = Yaml2PodoGenerator(camelize: camelize);
+  var lines = generator.generate(source as Map);
   var dirName = _path.dirname(inputFileName);
   var outputFileName = _path.basenameWithoutExtension(inputFileName);
   outputFileName = _path.join(dirName, outputFileName + '.dart');
@@ -49,73 +50,7 @@ void main(List<String> args) {
   outputFile.writeAsStringSync(lines.join('\n'));
 }
 
-bool alpha(int c) {
-  if (c >= 65 && c <= 90 || c >= 97 && c <= 122) {
-    return true;
-  }
-
-  return false;
-}
-
-bool alphanum(int c) {
-  if (c >= 48 && c <= 57 || c >= 65 && c <= 90 || c >= 97 && c <= 122) {
-    return true;
-  }
-
-  return false;
-}
-
-String camelize(String string, {bool lower = false}) {
-  if (string.isEmpty) {
-    return string;
-  }
-
-  string = string.toLowerCase();
-  var capitlize = true;
-  var length = string.length;
-  var position = 0;
-  var remove = false;
-  var sb = new StringBuffer();
-  for (var i = 0; i < length; i++) {
-    var s = string[i];
-    var c = s.codeUnitAt(0);
-    if (capitlize && alpha(c)) {
-      if (lower && position == 0) {
-        sb.write(s);
-      } else {
-        sb.write(s.toUpperCase());
-      }
-
-      capitlize = false;
-      remove = true;
-      position++;
-    } else {
-      if (c == 95) {
-        if (!remove) {
-          sb.write(s);
-          remove = true;
-        }
-
-        capitlize = true;
-      } else {
-        if (alphanum(c)) {
-          capitlize = false;
-          remove = true;
-        } else {
-          capitlize = true;
-          remove = false;
-          position = 0;
-        }
-
-        sb.write(s);
-      }
-    }
-  }
-
-  return sb.toString();
-}
-
-class PrototypingGenerator {
+class Yaml2PodoGenerator {
   bool _camelize;
 
   Map<String, _TypeInfo> _classes;
@@ -124,22 +59,26 @@ class PrototypingGenerator {
 
   Map<String, _TypeInfo> _primitiveTypes;
 
-  Map _source;
-
   Map<String, _TypeInfo> _types;
 
-  PrototypingGenerator(Map source, {bool camelize = false}) {
-    if (source == null) {
-      throw ArgumentError.notNull('source');
+  Yaml2PodoGenerator({bool camelize = true}) {
+    if (camelize == null) {
+      throw ArgumentError.notNull('camelize');
     }
 
     _camelize = camelize;
-    _source = source;
+    _dynamicType = _createDynmaicType();
+    _classes = {};
+    _types = {};
+    _primitiveTypes = {};
+    var names = ['bool', 'DateTime', 'double', 'int', 'num', 'String'];
+    for (var name in names) {
+      _primitiveTypes[name] = _createPrimitiveType(name);
+    }
   }
 
-  List<String> generate() {
-    _reset();
-    for (var key in _source.keys) {
+  List<String> generate(Map source, {bool camelize = true}) {
+    for (var key in source.keys) {
       var name = key.toString();
       var class_ = _parseTypeName(name);
       if (class_.typeArgs.isNotEmpty) {
@@ -155,13 +94,10 @@ class PrototypingGenerator {
       }
 
       _classes[class_.fullName] = class_;
-      var props = _source[key] as Map;
-      if (props == null) {
-        throw StateError(
-            'Object type declaration must contain properties: ${class_}');
+      var props = source[key] as Map;
+      if (props != null) {
+        _parseProps(class_, props);
       }
-
-      _parseProps(class_, props);
     }
 
     for (var class_ in _classes.values) {
@@ -257,8 +193,9 @@ class PrototypingGenerator {
     }
 
     for (var name in accessors.toList()..sort()) {
+      var escaped = _escapeIdentifier(name);
       lines.add(
-          '  ..addAccessor(\'${name}\', (o) => o.${name}, (o, v) => o.${name} = v)');
+          '  ..addAccessor(\'${escaped}\', (o) => o.${name}, (o, v) => o.${name} = v)');
     }
 
     for (var class_ in classes) {
@@ -268,11 +205,14 @@ class PrototypingGenerator {
         var propType = prop.type.fullName;
         var alias = '';
         if (prop.alias != null) {
-          alias = ', alias: \'${prop.alias}\'';
+          var escaped = _escapeIdentifier(prop.alias);
+          escaped = escaped.replaceAll('\'', '\\\'');
+          alias = ', alias: \'${escaped}\'';
         }
 
+        var escaped = _escapeIdentifier(propName);
         lines.add(
-            '  ..addProperty<${className}, ${propType}>(\'${propName}\'${alias})');
+            '  ..addProperty<${className}, ${propType}>(\'${escaped}\'${alias})');
       }
     }
 
@@ -359,24 +299,6 @@ class PrototypingGenerator {
     type.kind = kind;
   }
 
-  void _checkValidIdentifier(String name) {
-    void error(int offset) {
-      throw FormatException('Invalid identifier', name, offset);
-    }
-
-    var c = name.codeUnitAt(0);
-    if (!(alpha(c) || c == 95)) {
-      error(0);
-    }
-
-    for (var i = 1; i < name.length; i++) {
-      var c = name.codeUnitAt(i);
-      if (!(alphanum(c) || c == 95)) {
-        error(i);
-      }
-    }
-  }
-
   _TypeInfo _createDynmaicType() {
     var result = _TypeInfo();
     result.fullName = "dynamic";
@@ -393,25 +315,33 @@ class PrototypingGenerator {
     return result;
   }
 
+  String _escapeIdentifier(String ident) {
+    return ident.replaceAll('\$', '\\\$');
+  }
+
   void _parseProps(_TypeInfo type, Map data) {
+    var names = Set<String>();
     var props = <String, _PropInfo>{};
     for (var key in data.keys) {
-      var nameParts = key.toString().trim().split('.');
-      var name = nameParts[0].trim();
-      _checkValidIdentifier(name);
-      var alias = name;
-      if (nameParts.length > 1) {
-        alias = nameParts[1].trim();
-        _checkValidIdentifier(alias);
+      var alias = key.toString();
+      var name = alias;
+      name = _utils.convertToIdentifier(name, '\$');
+      if (_camelize) {
+        name = _utils.camelizeIdentifier(name);
       }
 
-      if (_camelize && name.contains('_')) {
-        var camelizedName = camelize(name, lower: true);
-        if (name != camelizedName) {
-          name = camelizedName;
+      name = _utils.makePublicIdentifier(name, 'anon');
+      if (names.contains(name)) {
+        while (true) {
+          name += '_';
+
+          if (!names.contains(name)) {
+            break;
+          }
         }
       }
 
+      names.add(name);
       if (alias == name) {
         alias = null;
       }
@@ -433,17 +363,6 @@ class PrototypingGenerator {
     var type = parser.parse(name);
     _analyzeType(type);
     return type;
-  }
-
-  void _reset() {
-    _dynamicType = _createDynmaicType();
-    _classes = {};
-    _types = {};
-    _primitiveTypes = {};
-    var names = ['bool', 'DateTime', 'double', 'int', 'num', 'String'];
-    for (var name in names) {
-      _primitiveTypes[name] = _createPrimitiveType(name);
-    }
   }
 }
 
@@ -605,10 +524,10 @@ class _TypeTokenizer {
           _nextCh();
           break;
         default:
-          if (alpha(_ch)) {
+          if (_utils.alpha(_ch) || _ch == 36 || _ch == 95) {
             var length = 1;
             _nextCh();
-            while (alphanum(_ch)) {
+            while (_utils.alphanum(_ch) || _ch == 36 || _ch == 95) {
               length++;
               _nextCh();
             }

@@ -2,7 +2,7 @@
 
 The marshalling library allows to marshal and unmarshal (also serialize/deserialize) an objects (e.g. into json compatible types)
 
-Version 0.1.10 (on development stage)
+Version 0.1.11 (on development stage)
 
 Included utilities:
 - resp2yaml
@@ -10,7 +10,7 @@ Included utilities:
 
 ### Utilty 'resp2yaml'
 
-The utilty `resp2yaml` generates (extracts) the json object prototypes (in `yaml` format) from the response data file (in `json` format).
+The utilty `resp2yaml` generates (extracts) the json object prototypes (in `yaml` format) from the response data file(s) (in `json` format).
 Use of this utility is optional.
 
 ### Utilty 'yaml2podo'

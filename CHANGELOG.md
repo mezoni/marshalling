@@ -1,3 +1,11 @@
+## 0.1.11
+
+- Added the ability to generate one file from several files in the utility `bin/resp2yaml.dart`
+- Fixed bugs in `bin/resp2yaml.dart`
+- Fixed bugs in `bin/yaml2podo.dart`
+- Minor improvements in `bin/resp2yaml.dart`
+- Minor improvements in `bin/yaml2podo.dart`
+
 ## 0.1.10
 
 - Minor improvements in `bin/resp2yaml.dart`

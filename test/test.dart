@@ -1,8 +1,10 @@
 import 'package:test/test.dart';
 
+import '../bin/_utils.dart' as _utils;
 import 'json_objects.dart';
 
 void main() {
+  _testBinUtils();
   _testJsonSerializer();
 }
 
@@ -14,6 +16,73 @@ final List<Product> _products = [
     ..id = 1
     ..name = 'Product 1'
 ];
+
+void _testBinUtils() {
+  test('_utils: capitalizeIdentifier()', () {
+    var result = _utils.capitalizeIdentifier('abc');
+    expect(result, 'Abc');
+    result = _utils.capitalizeIdentifier('_abc');
+    expect(result, '_Abc');
+    result = _utils.capitalizeIdentifier('\$abc');
+    expect(result, '\$Abc');
+    result = _utils.capitalizeIdentifier('_\$abc');
+    expect(result, '_\$Abc');
+    result = _utils.capitalizeIdentifier('\$_abc');
+    expect(result, '\$_Abc');
+    result = _utils.capitalizeIdentifier('_');
+    expect(result, '_');
+    result = _utils.capitalizeIdentifier('');
+    expect(result, '');
+  });
+
+  test('_utils: camelizeIdentifier()', () {
+    var result = _utils.camelizeIdentifier('');
+    expect(result, '');
+    result = _utils.camelizeIdentifier('abc');
+    expect(result, 'abc');
+    result = _utils.camelizeIdentifier('abc_');
+    expect(result, 'abc_');
+    result = _utils.camelizeIdentifier('abc_def_');
+    expect(result, 'abcDef_');
+    result = _utils.camelizeIdentifier('abc_def');
+    expect(result, 'abcDef');
+    result = _utils.camelizeIdentifier('_abc_def');
+    expect(result, '_abcDef');
+    result = _utils.camelizeIdentifier('__abc_def');
+    expect(result, '__abcDef');
+    result = _utils.camelizeIdentifier('abc__def');
+    expect(result, 'abc_Def');
+    result = _utils.camelizeIdentifier('_abc__def');
+    expect(result, '_abc_Def');
+    result = _utils.camelizeIdentifier('__abc__def');
+    expect(result, '__abc_Def');
+  });
+
+  test('_utils: convertToIdentifier()', () {
+    var replacement = '\$';
+    var result = _utils.convertToIdentifier('1abc', replacement);
+    expect(result, '\$abc');
+    result = _utils.convertToIdentifier('a:bc', replacement);
+    expect(result, 'a\$bc');
+    result = _utils.convertToIdentifier('abc?', replacement);
+    expect(result, 'abc\$');
+  });
+
+  test('_utils: makePublicIdentifier()', () {
+    var result = _utils.makePublicIdentifier('', 'temp');
+    expect(result, 'temp');
+    result = _utils.makePublicIdentifier('_', 'temp');
+    expect(result, 'temp_');
+    result = _utils.makePublicIdentifier('__', 'temp');
+    expect(result, 'temp__');
+    result = _utils.makePublicIdentifier('abc', 'temp');
+    expect(result, 'abc');
+    result = _utils.makePublicIdentifier('_abc', 'temp');
+    expect(result, 'abc_');
+    result = _utils.makePublicIdentifier('__abc', 'temp');
+    expect(result, 'abc__');
+  });
+}
 
 void _testJsonSerializer() {
   test('Serialize "Order" instance', () {

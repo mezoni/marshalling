@@ -13,7 +13,7 @@
             "request": "launch",
             "type": "dart",
             "args": [
-                "example/json_objects.yaml"
+                "bin/foo.yaml"
             ]
         },
         {
@@ -22,7 +22,7 @@
             "request": "launch",
             "type": "dart",
             "args": [
-                "bin/starship.json"
+                "bin/test.json"
             ]
         }
     ]

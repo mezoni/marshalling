@@ -4,14 +4,22 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:path/path.dart' as _path;
 
-// Experimental
+import '_utils.dart' as _utils;
+
 void main(List<String> args) {
   var argParser = ArgParser();
   argParser.addFlag('help',
       defaultsTo: false, help: 'Displays help information');
+  argParser.addOption('out', help: 'Output file name');
   ArgResults argResults;
   void usage() {
     print('Usage: resp2yaml [options] path/to/resposnse.json');
+  }
+
+  void error(String message) {
+    usage();
+    print(message);
+    exit(0);
   }
 
   try {
@@ -27,95 +35,38 @@ void main(List<String> args) {
     exit(0);
   }
 
-  if (argResults.rest.length != 1) {
-    usage();
-    print('Missing json request data file name');
-    exit(0);
+  if (argResults.rest.isEmpty) {
+    error('Missing json request data file name(s)');
   }
 
-  var inputFileName = argResults.rest[0];
-  var inputFile = File(inputFileName);
-  var data = inputFile.readAsStringSync();
-  var source = jsonDecode(data);
-  var className = _path.basenameWithoutExtension(inputFileName);
-  if (className.contains('_')) {
-    className = camelize(className);
-  }
-
-  className = className[0].toUpperCase() + className.substring(1);
-  var generator = Resp2YamlGenerator(source, className);
-  var lines = generator.generate();
-  var dirName = _path.dirname(inputFileName);
-  var outputFileName = _path.basenameWithoutExtension(inputFileName);
-  outputFileName = _path.join(dirName, outputFileName + '.yaml');
-  var outputFile = File(outputFileName);
-  outputFile.writeAsStringSync(lines.join('\n'));
-}
-
-bool alpha(int c) {
-  if (c >= 65 && c <= 90 || c >= 97 && c <= 122) {
-    return true;
-  }
-
-  return false;
-}
-
-bool alphanum(int c) {
-  if (c >= 48 && c <= 57 || c >= 65 && c <= 90 || c >= 97 && c <= 122) {
-    return true;
-  }
-
-  return false;
-}
-
-String camelize(String string, {bool lower = false}) {
-  if (string.isEmpty) {
-    return string;
-  }
-
-  string = string.toLowerCase();
-  var capitlize = true;
-  var length = string.length;
-  var position = 0;
-  var remove = false;
-  var sb = new StringBuffer();
-  for (var i = 0; i < length; i++) {
-    var s = string[i];
-    var c = s.codeUnitAt(0);
-    if (capitlize && alpha(c)) {
-      if (lower && position == 0) {
-        sb.write(s);
-      } else {
-        sb.write(s.toUpperCase());
-      }
-
-      capitlize = false;
-      remove = true;
-      position++;
-    } else {
-      if (c == 95) {
-        if (!remove) {
-          sb.write(s);
-          remove = true;
-        }
-
-        capitlize = true;
-      } else {
-        if (alphanum(c)) {
-          capitlize = false;
-          remove = true;
-        } else {
-          capitlize = true;
-          remove = false;
-          position = 0;
-        }
-
-        sb.write(s);
-      }
+  String outputFullPath;
+  var fileNames = argResults.rest;
+  if (fileNames.length > 1) {
+    outputFullPath = argResults['out'] as String;
+    if (outputFullPath == null) {
+      error('Missing output file name');
     }
+  } else {
+    var inputFileName = fileNames[0];
+    var outputFileName = _path.basenameWithoutExtension(inputFileName);
+    var dirName = _path.dirname(inputFileName);
+    outputFullPath = _path.join(dirName, outputFileName + '.yaml');
   }
 
-  return sb.toString();
+  var lines = <String>[];
+  for (var fileName in fileNames) {
+    var inputFile = File(fileName);
+    var text = inputFile.readAsStringSync();
+    var jsonObject = jsonDecode(text);
+    var generator = Resp2YamlGenerator();
+    var name = _path.basenameWithoutExtension(fileName);
+    lines.add('# ${fileName}');
+    var result = generator.generate(jsonObject, [name]);
+    lines.addAll(result);
+  }
+
+  var outputFile = File(outputFullPath);
+  outputFile.writeAsStringSync(lines.join('\n'));
 }
 
 class Resp2YamlGenerator {
@@ -123,23 +74,8 @@ class Resp2YamlGenerator {
 
   Map<String, Map<String, Set<String>>> _classes = {};
 
-  String _className;
-
-  dynamic _source;
-
-  Resp2YamlGenerator(dynamic source, String className) {
-    _className = className;
-    _source = source;
-  }
-
-  List<String> generate() {
-    _reset();
-    if (_source is Map || _source is List) {
-      _analyze(_source, [_className]);
-    } else {
-      throw StateError('Unsupported response type: ${_source.runtimeType}');
-    }
-
+  List<String> generate(dynamic jsonObject, List<String> path) {
+    _analyze(jsonObject, path);
     var lines = <String>[];
     for (var className in _classes.keys) {
       lines.add('${className}:');
@@ -154,24 +90,6 @@ class Resp2YamlGenerator {
     }
 
     return lines;
-  }
-
-  String _reduceTypeUnion(Set<String> typeUnion) {
-    if (typeUnion.isEmpty) {
-      throw StateError('Internal error');
-    }
-
-    if (typeUnion.length == 1) {
-      return typeUnion.first;
-    }
-
-    if (typeUnion.length == 2) {
-      if (typeUnion.contains(_unknownTypeName)) {
-        return typeUnion.where((e) => e != _unknownTypeName).first;
-      }
-    }
-
-    return _unknownTypeName;
   }
 
   String _analyze(dynamic value, List<String> path) {
@@ -224,13 +142,8 @@ class Resp2YamlGenerator {
   }
 
   String _analyzeMap(Map map, List<String> path) {
-    var className = _getClassName(path);
+    var className = _registerClass(path);
     var class_ = _classes[className];
-    if (class_ == null) {
-      class_ = {};
-      _classes[className] = class_;
-    }
-
     for (var key in map.keys) {
       var newkey = key.toString();
       var value = map[key];
@@ -248,26 +161,53 @@ class Resp2YamlGenerator {
     return className;
   }
 
-  String _getClassName(List<String> path) {
-    var list = <String>[];
-    for (var part in path) {
-      if (part.contains('_')) {
-        part = camelize(part);
-      } else {
-        part = part[0].toUpperCase() + part.substring(1);
-      }
-
-      list.add(part);
-    }
-
-    return list.join('');
-  }
-
   String _pathToString(List<String> path) {
     return path.join('.');
   }
 
-  void _reset() {
-    //
+  String _reduceTypeUnion(Set<String> typeUnion) {
+    if (typeUnion.isEmpty) {
+      throw StateError('Internal error');
+    }
+
+    if (typeUnion.length == 1) {
+      return typeUnion.first;
+    }
+
+    if (typeUnion.length == 2) {
+      if (typeUnion.contains(_unknownTypeName)) {
+        return typeUnion.where((e) => e != _unknownTypeName).first;
+      }
+    }
+
+    return _unknownTypeName;
+  }
+
+  String _registerClass(List<String> path) {
+    var parts = <String>[];
+    for (var part in path) {
+      part = _utils.convertToIdentifier(part, '\$');
+      part = _utils.makePublicIdentifier(part, 'Anon');
+      part = _utils.camelizeIdentifier(part);
+      part = _utils.capitalizeIdentifier(part);
+      parts.add(part);
+    }
+
+    var result = parts.join();
+    result = _utils.convertToIdentifier(result, '\$');
+    result = _utils.makePublicIdentifier(result, 'Anon');
+    result = _utils.camelizeIdentifier(result);
+    result = _utils.capitalizeIdentifier(result);
+    if (_classes.containsKey(result)) {
+      while (true) {
+        result += '_';
+        if (!_classes.containsKey(result)) {
+          break;
+        }
+      }
+    }
+
+    _classes[result] = {};
+    return result;
   }
 }
