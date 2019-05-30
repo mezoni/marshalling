@@ -135,6 +135,10 @@ class Resp2YamlGenerator {
     for (var element in list) {
       var typeName = _analyze(element, path);
       typeUnion.add(typeName);
+      // TODO: Temporary solution. Need implement a deeper analysis
+      if (element is Map) {
+        break;
+      }
     }
 
     var typeName = _reduceTypeUnion(typeUnion);

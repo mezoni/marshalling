@@ -1,3 +1,7 @@
+## 0.1.12
+
+- Fixed bug in `bin/resp2yaml.dart`
+
 ## 0.1.11
 
 - Added the ability to generate one file from several files in the utility `bin/resp2yaml.dart`

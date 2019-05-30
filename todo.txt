@@ -2,4 +2,4 @@ Privacy (in generators)
 Implement converters (timestamp <=> DateTime) in JsonSerializer?
 Simplify prototyping in yaml2podo, add support of anonymous nested object types
 Add tests for type 'Object', also for collections with this type
-Recognize maps in 'resp2yaml'
+Need implement a deeper analysis of object in `resp2yaml` (more the one instrance)
