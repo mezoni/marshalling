@@ -68,6 +68,17 @@ void _testBinUtils() {
     expect(result, 'abc\$');
   });
 
+  test('_utils: isValidDate()', () {
+    var result = _utils.isValidDate('2018');
+    expect(result, false);
+    result = _utils.isValidDate('2018-12');
+    expect(result, false);
+    result = _utils.isValidDate('2018-12-01');
+    expect(result, true);
+    result = _utils.isValidDate('92998-3874');
+    expect(result, false);
+  });
+
   test('_utils: makePublicIdentifier()', () {
     var result = _utils.makePublicIdentifier('', 'temp');
     expect(result, 'temp');

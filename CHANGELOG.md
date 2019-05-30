@@ -1,10 +1,14 @@
+## 0.1.15
+
+- Fixed bug (with smart analyzing DateTime) in utility `bin/resp2yaml.dart`
+
 ## 0.1.14
 
-- Fixed bug in `bin/resp2yaml.dart`
+- Fixed bug (with output filename) in utility `bin/resp2yaml.dart`
 
 ## 0.1.12
 
-- Fixed bug in `bin/resp2yaml.dart`
+- Fixed bug (with lack of deeper analyzing) in utility `bin/resp2yaml.dart`
 
 ## 0.1.11
 

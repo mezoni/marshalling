@@ -82,7 +82,8 @@ class Resp2YamlGenerator {
       for (var key in class_.keys) {
         var typeUnion = class_[key];
         var typeName = _reduceTypeUnion(typeUnion);
-        lines.add('  ${key}: ${typeName}');
+        var escaped = key.replaceAll('"', '\\\"');
+        lines.add('  "${escaped}": ${typeName}');
       }
 
       lines.add('');
@@ -105,14 +106,7 @@ class Resp2YamlGenerator {
     } else if (value is int) {
       return 'int';
     } else if (value is String) {
-      var date;
-      try {
-        date = DateTime.parse(value);
-      } on FormatException {
-        //
-      }
-
-      if (date != null) {
+      if (_utils.isValidDate(value)) {
         return 'DateTime';
       }
 
