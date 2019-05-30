@@ -39,14 +39,13 @@ void main(List<String> args) {
     error('Missing json request data file name(s)');
   }
 
-  String outputFullPath;
+  var outputFullPath = argResults['out'] as String;
   var fileNames = argResults.rest;
-  if (fileNames.length > 1) {
-    outputFullPath = argResults['out'] as String;
-    if (outputFullPath == null) {
+  if (outputFullPath == null) {
+    if (fileNames.length > 1) {
       error('Missing output file name');
     }
-  } else {
+
     var inputFileName = fileNames[0];
     var outputFileName = _path.basenameWithoutExtension(inputFileName);
     var dirName = _path.dirname(inputFileName);

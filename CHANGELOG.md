@@ -1,3 +1,7 @@
+## 0.1.14
+
+- Fixed bug in `bin/resp2yaml.dart`
+
 ## 0.1.12
 
 - Fixed bug in `bin/resp2yaml.dart`
