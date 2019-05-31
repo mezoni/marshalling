@@ -2,7 +2,7 @@
 
 The marshalling library allows to marshal and unmarshal (also serialize/deserialize) an objects (e.g. into json compatible types)
 
-Version 0.1.18 (on development stage)
+Version 0.1.19 (on development stage)
 
 Included utilities:
 - resp2yaml

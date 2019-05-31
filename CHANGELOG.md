@@ -1,3 +1,7 @@
+## 0.1.19
+
+- Improved error messages for `JsonSerializer` while reading and writing field values to/from objects 
+
 ## 0.1.18
 
 - Improved error messages for `JsonSerializer`

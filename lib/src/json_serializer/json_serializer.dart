@@ -201,7 +201,14 @@ class JsonSerializer extends Marshaller {
       }
 
       var acesssor = accessors[name];
-      var v = acesssor.read(value);
+      var v;
+      try {
+        v = acesssor.read(value);
+      } catch (e) {
+        _error(
+            'Unable to read value from \'${value.runtimeType}.${name}\'', path);
+      }
+
       result[alias] = _marshal(v, property.type, _makePath(path, key: alias));
     }
 
@@ -339,8 +346,10 @@ class JsonSerializer extends Marshaller {
             try {
               accessor.write(result, val);
             } catch (e) {
-              var t = value[alias].runtimeType;
-              _error('Unable to write value of type \'${t}\'',
+              var t1 = value[alias].runtimeType;
+              var t2 = result.runtimeType;
+              _error(
+                  'Unable to write value of type \'${t1}\' to \'${t2}.${name}\'',
                   _makePath(path, key: alias));
             }
           }
