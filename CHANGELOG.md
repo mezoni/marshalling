@@ -1,3 +1,7 @@
+## 0.1.16
+
+- Fixed bug (with Dart reserved words) in utility `bin/yaml2podo.dart`
+
 ## 0.1.15
 
 - Fixed bug (with smart analyzing DateTime) in utility `bin/resp2yaml.dart`

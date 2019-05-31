@@ -16,9 +16,11 @@ final json = JsonSerializer()
   ..addAccessor('amount', (o) => o.amount, (o, v) => o.amount = v)
   ..addAccessor('date', (o) => o.date, (o, v) => o.date = v)
   ..addAccessor('id', (o) => o.id, (o, v) => o.id = v)
+  ..addAccessor('int_', (o) => o.int_, (o, v) => o.int_ = v)
   ..addAccessor('items', (o) => o.items, (o, v) => o.items = v)
   ..addAccessor('messages', (o) => o.messages, (o, v) => o.messages = v)
   ..addAccessor('name', (o) => o.name, (o, v) => o.name = v)
+  ..addAccessor('null_', (o) => o.null_, (o, v) => o.null_ = v)
   ..addAccessor('price', (o) => o.price, (o, v) => o.price = v)
   ..addAccessor('product', (o) => o.product, (o, v) => o.product = v)
   ..addAccessor('products', (o) => o.products, (o, v) => o.products = v)
@@ -31,6 +33,8 @@ final json = JsonSerializer()
   ..addProperty<OrderItem, int>('quantity', alias: 'qty')
   ..addProperty<OrderItem, double>('price')
   ..addProperty<OrderItem, Product>('product')
+  ..addProperty<Product, int>('int_', alias: 'int')
+  ..addProperty<Product, String>('null_', alias: 'null')
   ..addProperty<Product, String>('name')
   ..addProperty<Product, int>('id');
 
@@ -95,6 +99,8 @@ class OrderItem {
 }
 
 class Product {
+  int int_;
+  String null_;
   String name;
   int id;
 

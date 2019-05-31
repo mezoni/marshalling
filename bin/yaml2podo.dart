@@ -57,6 +57,10 @@ class Yaml2PodoGenerator {
 
   _TypeInfo _dynamicType;
 
+  Set<String> _primitiveTypeNames;
+
+  Set<String> _reservedWords;
+
   Map<String, _TypeInfo> _primitiveTypes;
 
   Map<String, _TypeInfo> _types;
@@ -70,9 +74,55 @@ class Yaml2PodoGenerator {
     _dynamicType = _createDynmaicType();
     _classes = {};
     _types = {};
+
     _primitiveTypes = {};
-    var names = ['bool', 'DateTime', 'double', 'int', 'num', 'String'];
-    for (var name in names) {
+    _primitiveTypeNames = Set<String>.from([
+      'bool',
+      'DateTime',
+      'double',
+      'int',
+      'num',
+      'String',
+    ]);
+
+    _reservedWords = Set<String>.from([
+      "assert",
+      "break",
+      "case",
+      "catch",
+      "class",
+      "const",
+      "continue",
+      "default",
+      "do",
+      "else",
+      "enum",
+      "extends",
+      "false",
+      "final",
+      "finally",
+      "for",
+      "if",
+      "in",
+      "is",
+      "late",
+      "new",
+      "null",
+      "rethrow",
+      "return",
+      "super",
+      "switch",
+      "this",
+      "throw",
+      "true",
+      "try",
+      "var",
+      "void",
+      "while",
+      "with",
+    ]);
+
+    for (var name in _primitiveTypeNames) {
       _primitiveTypes[name] = _createPrimitiveType(name);
     }
   }
@@ -323,19 +373,37 @@ class Yaml2PodoGenerator {
     var names = Set<String>();
     var props = <String, _PropInfo>{};
     for (var key in data.keys) {
-      var alias = key.toString();
+      var parts = key.toString().split('.');
+      var alias = parts[0].trim();
       var name = alias;
+      if (parts.length == 2) {
+        alias = parts[1].trim();
+      } else if (parts.length > 2) {
+        throw StateError("Invalid property declaration: ${key}");
+      }
+
       name = _utils.convertToIdentifier(name, '\$');
       if (_camelize) {
         name = _utils.camelizeIdentifier(name);
       }
 
+      bool isReservedName(String ident) {
+        if (_reservedWords.contains(name)) {
+          return true;
+        }
+
+        if (_primitiveTypeNames.contains(name)) {
+          return true;
+        }
+
+        return false;
+      }
+
       name = _utils.makePublicIdentifier(name, 'anon');
-      if (names.contains(name)) {
+      if (names.contains(name) || isReservedName(name)) {
         while (true) {
           name += '_';
-
-          if (!names.contains(name)) {
+          if (!names.contains(name) && !isReservedName(name)) {
             break;
           }
         }
