@@ -1,3 +1,8 @@
+## 0.1.18
+
+- Improved error messages for `JsonSerializer`
+- Fixed bug (with smart analyzing DateTime) in utility `bin/resp2yaml.dart`.
+
 ## 0.1.17
 
 - Added type `MarshallingError`

@@ -109,7 +109,17 @@ class Resp2YamlGenerator {
     } else if (value is int) {
       return 'int';
     } else if (value is String) {
-      if (_utils.isValidDate(value)) {
+      DateTime date;
+      try {
+        date = DateTime.parse(value);
+        if (value != date.toIso8601String()) {
+          date = null;
+        }
+      } catch (e) {
+        //
+      }
+
+      if (date != null) {
         return 'DateTime';
       }
 

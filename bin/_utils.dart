@@ -142,21 +142,6 @@ String convertToIdentifier(String str, String replacement) {
   return result;
 }
 
-bool isValidDate(String date) {
-  DateTime value;
-  try {
-    value = DateTime.parse(date);
-    var iso = value.toIso8601String();
-    if (!iso.startsWith(date)) {
-      value = null;
-    }
-  } on FormatException {
-    //
-  }
-
-  return value != null;
-}
-
 String makePublicIdentifier(String ident, String option) {
   if (ident == null) {
     throw ArgumentError.notNull('ident');

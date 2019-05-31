@@ -54,6 +54,10 @@ class JsonSerializer extends Marshaller {
     _error('Expected value of type \'$type\'', path);
   }
 
+  void _errorUnableToConvertValue(Type type, List<String> path) {
+    _error('Unable to convert value to type \'${type}\'', path);
+  }
+
   List<String> _makePath(List<String> path, {String key, int index}) {
     if (!_debug) {
       return path;
@@ -102,11 +106,19 @@ class JsonSerializer extends Marshaller {
 
     if (value is String) {
       if (type == int) {
-        return int.parse(value);
+        try {
+          return int.parse(value);
+        } catch (e) {
+          _errorUnableToConvertValue(type, path);
+        }
       }
 
       if (type == double) {
-        return double.parse(value);
+        try {
+          return double.parse(value);
+        } catch (e) {
+          _errorUnableToConvertValue(type, path);
+        }
       }
 
       return value;
@@ -207,15 +219,27 @@ class JsonSerializer extends Marshaller {
 
     if (value is String) {
       if (type == DateTime) {
-        return DateTime.parse(value);
+        try {
+          return DateTime.parse(value);
+        } catch (e) {
+          _errorUnableToConvertValue(type, path);
+        }
       }
 
       if (type == int) {
-        return int.parse(value);
+        try {
+          return int.parse(value);
+        } catch (e) {
+          _errorUnableToConvertValue(type, path);
+        }
       }
 
       if (type == double) {
-        return double.parse(value);
+        try {
+          return double.parse(value);
+        } catch (e) {
+          _errorUnableToConvertValue(type, path);
+        }
       }
 
       return value;
@@ -223,7 +247,11 @@ class JsonSerializer extends Marshaller {
 
     if (value is int) {
       if (type == double) {
-        return value.toDouble();
+        try {
+          return value.toDouble();
+        } catch (e) {
+          _errorUnableToConvertValue(type, path);
+        }
       }
 
       if (type == String) {
