@@ -1,6 +1,12 @@
 part of '../../json_serializer.dart';
 
 class JsonSerializer extends Marshaller {
+  bool _debug = false;
+
+  void debug() {
+    _debug = true;
+  }
+
   @override
   dynamic marshal<T>(T value, {Type type}) {
     if (type == null) {
@@ -10,7 +16,12 @@ class JsonSerializer extends Marshaller {
       }
     }
 
-    return _marshal(value, type);
+    var path = const <String>[];
+    if (_debug) {
+      path = ['${type}'];
+    }
+
+    return _marshal(value, type, path);
   }
 
   @override
@@ -22,14 +33,49 @@ class JsonSerializer extends Marshaller {
       }
     }
 
-    return _unmarshal(value, type) as T;
+    var path = const <String>[];
+    if (_debug) {
+      path = ['${type}'];
+    }
+
+    return _unmarshal(value, type, path) as T;
   }
 
-  void _errorExpectedValueOfType(Type type) {
-    throw StateError('Expected value of type: $type');
+  void _error(String message, List<String> path) {
+    var p = _pathToString(path);
+    if (p.isNotEmpty) {
+      message += ': ${p}';
+    }
+
+    throw MarshallingError(message);
   }
 
-  dynamic _marshal(dynamic value, Type type) {
+  void _errorExpectedValueOfType(Type type, List<String> path) {
+    _error('Expected value of type \'$type\'', path);
+  }
+
+  List<String> _makePath(List<String> path, {String key, int index}) {
+    if (!_debug) {
+      return path;
+    }
+
+    var result = path.toList();
+    if (key != null) {
+      result.add(key);
+    }
+
+    if (index != null) {
+      if (result.isNotEmpty) {
+        result.last += '[$index]';
+      } else {
+        result.add('[$index]');
+      }
+    }
+
+    return result;
+  }
+
+  dynamic _marshal(dynamic value, Type type, List<String> path) {
     if (value == null) {
       return value;
     }
@@ -76,12 +122,13 @@ class JsonSerializer extends Marshaller {
       if (value is Map) {
         var result = {};
         for (var key in value.keys) {
-          result[key] = marshal(value[key], type: valueType);
+          result[key] = _marshal(
+              value[key], valueType, _makePath(path, key: key.toString()));
         }
 
         return result;
       } else {
-        _errorExpectedValueOfType(Map);
+        _errorExpectedValueOfType(Map, path);
       }
     }
 
@@ -90,23 +137,28 @@ class JsonSerializer extends Marshaller {
       if (value is Iterable) {
         var result = [];
         if (result is List) {
+          var index = 0;
           for (var element in value) {
-            result.add(marshal(element, type: elementType));
+            result.add(_marshal(
+                element, elementType, _makePath(path, index: index++)));
           }
         } else {
-          _errorExpectedValueOfType(List);
+          _errorExpectedValueOfType(List, path);
         }
 
         return result;
       } else {
-        _errorExpectedValueOfType(Iterable);
+        _errorExpectedValueOfType(Iterable, path);
       }
     }
 
     if (value is Map) {
       var result = {};
       for (var key in value.keys) {
-        result[key.toString()] = marshal(value[key]);
+        var k = key.toString();
+        var v = value[key];
+        var t = v.runtimeType as Type;
+        result[k] = _marshal(v, t, _makePath(path, key: k));
       }
 
       return result;
@@ -114,15 +166,18 @@ class JsonSerializer extends Marshaller {
 
     if (value is Iterable) {
       var result = [];
+      var index = 0;
       for (var element in value) {
-        result.add(marshal(element));
+        var t = element.runtimeType as Type;
+        result.add(_marshal(element, t, _makePath(path, index: index++)));
       }
 
       return result;
     }
 
     if (typeInfo == null) {
-      throw StateError('Unable to marshal value of type: ${type}');
+      _error('Unable to marshal value of type \'$type\'', path);
+      return null;
     }
 
     var result = <String, dynamic>{};
@@ -134,14 +189,18 @@ class JsonSerializer extends Marshaller {
       }
 
       var acesssor = accessors[name];
-      var val = acesssor.read(value);
-      result[alias] = marshal(val, type: property.type);
+      var v = acesssor.read(value);
+      result[alias] = _marshal(v, property.type, _makePath(path, key: alias));
     }
 
     return result;
   }
 
-  dynamic _unmarshal(dynamic value, Type type) {
+  String _pathToString(List<String> path) {
+    return path.join('.');
+  }
+
+  dynamic _unmarshal(dynamic value, Type type, List<String> path) {
     if (value == null) {
       return value;
     }
@@ -197,16 +256,18 @@ class JsonSerializer extends Marshaller {
       if (result is Map) {
         if (value is Map) {
           for (var key in value.keys) {
-            result[key.toString()] = unmarshal(value[key], type: valueType);
+            var k = key.toString();
+            result[k] =
+                _unmarshal(value[key], valueType, _makePath(path, key: k));
           }
 
           return result;
         } else {
-          _errorExpectedValueOfType(Map);
+          _errorExpectedValueOfType(Map, path);
           return null;
         }
       } else {
-        _errorExpectedValueOfType(Map);
+        _errorExpectedValueOfType(Map, path);
         return null;
       }
     }
@@ -216,17 +277,19 @@ class JsonSerializer extends Marshaller {
       var result = typeInfo.construct();
       if (result is List) {
         if (value is Iterable) {
+          var index = 0;
           for (var element in value) {
-            result.add(unmarshal(element, type: elementType));
+            result.add(_unmarshal(
+                element, elementType, _makePath(path, index: index++)));
           }
 
           return result;
         } else {
-          _errorExpectedValueOfType(Iterable);
+          _errorExpectedValueOfType(Iterable, path);
           return null;
         }
       } else {
-        _errorExpectedValueOfType(List);
+        _errorExpectedValueOfType(List, path);
         return null;
       }
     }
@@ -243,22 +306,31 @@ class JsonSerializer extends Marshaller {
 
           if (value.containsKey(alias)) {
             var accessor = accessors[name];
-            var val = unmarshal(value[alias], type: property.type);
-            accessor.write(result, val);
+            var val = _unmarshal(
+                value[alias], property.type, _makePath(path, key: alias));
+            try {
+              accessor.write(result, val);
+            } catch (e) {
+              var t = value[alias].runtimeType;
+              _error('Unable to write value of type \'${t}\'',
+                  _makePath(path, key: alias));
+            }
           }
         }
 
         return result;
       } else {
-        _errorExpectedValueOfType(Map);
+        _errorExpectedValueOfType(Map, path);
         return null;
       }
     }
 
     if (value is Iterable) {
       var result = [];
+      var index = 0;
       for (var element in value) {
-        result.add(unmarshal(element));
+        var t = element.runtimeType as Type;
+        result.add(_unmarshal(element, t, _makePath(path, index: index++)));
       }
 
       return result;
@@ -267,12 +339,15 @@ class JsonSerializer extends Marshaller {
     if (value is Map) {
       var result = {};
       for (var key in value.keys) {
-        result[key] = unmarshal(value[key]);
+        var v = value[key];
+        var t = v.runtimeType as Type;
+        result[key] = _unmarshal(v, t, _makePath(path, key: key.toString()));
       }
 
       return result;
     }
 
-    throw StateError('Unable to unmarshal value of type: $type');
+    _error('Expected value of type \'$type\'', path);
+    return null;
   }
 }

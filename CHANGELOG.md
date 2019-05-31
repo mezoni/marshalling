@@ -1,3 +1,9 @@
+## 0.1.17
+
+- Added type `MarshallingError`
+- Added debug mode for `JsonSerializer`
+- Added ability to display more informative error messages in debug mode for `JsonSerializer`
+
 ## 0.1.16
 
 - Fixed bug (with Dart reserved words) in utility `bin/yaml2podo.dart`
